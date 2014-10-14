@@ -1,0 +1,1 @@
+Program(Glob('*.c'), LINKFLAGS = ['/DEBUG'], CFLAGS=['/DEBUG'], CPPDEFINES=['DEBUG', '_DEBUG'])
