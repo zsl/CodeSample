@@ -1,0 +1,36 @@
+// ShellTools.idl : ShellTools 的 IDL 源
+//
+
+// 此文件将由 MIDL 工具处理以
+// 产生类型库(ShellTools.tlb)和封送处理代码。
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(D0C07122-FF98-4C36-B8BB-926FD1FB25B8),
+	dual,
+	nonextensible,
+	helpstring("IShellToolExt 接口"),
+	pointer_default(unique)
+]
+interface IShellToolExt : IDispatch{
+};
+[
+	uuid(54CEACC6-CD21-4EDD-A929-CABAF867883D),
+	version(1.0),
+	helpstring("ShellTools 1.0 类型库")
+]
+library ShellToolsLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(9651D934-E3E0-4468-8B91-ACB00C78FDEE),
+		helpstring("ShellToolExt Class")
+	]
+	coclass ShellToolExt
+	{
+		[default] interface IShellToolExt;
+	};
+};
