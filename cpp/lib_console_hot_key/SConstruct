@@ -1,0 +1,280 @@
+#!/usr/bin/env python
+#-*- coding:gbk -*-
+
+import os
+import sys
+from copy import copy
+path = os.path
+is_win32 = sys.platform == 'win32'
+
+Help(
+'''
+Usage:
+    scons debug
+    scons release
+    scons all
+    scons debug -c #to clean debug project
+'''
+)
+
+#生成目标文件名
+BUILD_NAME = "consoleutil"
+
+#生成目标文件类型
+BUILD_TYPE = ('program', 'shared', 'library')[1]
+
+#生成目标路径
+BUILD_PATH = "./../../../temp/consoleutil/bin"
+
+#中间文件目录
+OBJECT_PATH = "./../../../temp/consoleutil/obj"
+
+#源文件后缀
+SOURCE_SUFFIXES = Split(".c .cpp .cxx .cc .c++")
+if is_win32:
+    SOURCE_SUFFIXES.append('.rc')
+
+#排除的源文件列表
+SOURCE_EXCLUDES = [
+]
+
+#源文件搜索路径，本脚本使用,用*表示一层目录，**表示所有子目录，如./src/**表示./src目录以及它下面的所有子目录
+SRC_PATH = [
+    '.',
+]
+
+#包含文件搜索路径，编译器使用，不能使用*和**，可以在环境变量中指定 VC：INCLUDE, GCC: C_INCLUDE_PATH
+INC_PATH = [
+    '.',
+    os.environ['BOOST_ROOT'],
+    os.environ['PYTHON'] + '/include',
+]
+
+#库文件搜索路径，链接器使用，不能使用*和**，可以在环境变量中指定 VC：LIB，GCC：LIBRARY_PATH
+LIB_PATH = [
+    os.environ['BOOST_LIB'],
+    os.environ['PYTHON'] + '/Libs',
+]
+
+#宏定义
+CPPDEFINES = Split("UNICODE _UNICODE BOOST_PYTHON_STATIC_LIB EXPORT_PYTHON__")
+
+#库
+LIBS = Split("")
+
+DEFAULT_ENV = "release"
+
+def _rmext(filepath):
+    ret = path.splitext(str(filepath))[0]
+    return ret
+
+if is_win32:
+    envs = [
+        Environment(
+            ENVNAME        = "debug",
+            ENV            = os.environ,
+            #MSVC_VERSION   = "9.0",
+            WINDOWS_EMBED_MANIFEST = 1,
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split(""),
+            LIBS           = Split("user32") + LIBS,
+            CCFLAGS        = Split("/nologo /W4 /Zc:forScope /Zc:wchar_t /GR /EHsc /MDd /Zi /Od /wd4996 /we4013 /we4700 /we4701 /we4715 /we4716 /Fa${RMEXT(TARGET)}.asm /FAs /Fd${RMEXT(TARGET)}.pdb"),
+            LINKFLAGS      = Split("/nologo /DEBUG /MAP:${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ),
+        Environment(
+            ENVNAME        = "release",
+            ENV            = os.environ,
+            #MSVC_VERSION   = "9.0",
+            WINDOWS_EMBED_MANIFEST = 1,
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split(""),
+            LIBS           = Split("user32") + LIBS,
+            CCFLAGS        = Split("/nologo /W4 /Zc:forScope /Zc:wchar_t /GR /Ob2 /EHsc /MD /Zi /Od /wd4996 /we4013 /we4700 /we4701 /we4715 /we4716 /Fa${RMEXT(TARGET)}.asm /FAs /Fd${RMEXT(TARGET)}.pdb"),
+            LINKFLAGS      = Split("/nologo /DEBUG /MAP:${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ),
+        Environment(
+            ENVNAME        = "mwdebug",
+            ENV            = os.environ,
+            tools          = ["mingw"],
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split(""),
+            LIBS           = Split("gcov") + LIBS,
+            CCFLAGS        = Split("-g -Wall -Werror-implicit-function-declaration -fexceptions -mthreads -pipe -ftest-coverage -fprofile-arcs"),
+            LINKFLAGS      = Split("-mthreads -Wl,-Map,${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ) ,
+        Environment(
+            ENVNAME        = "mwrelease",
+            ENV            = os.environ,
+            tools          = ["mingw"],
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split("NDEBUG"),
+            LIBS           = Split("") + LIBS,
+            CCFLAGS        = Split("-O3 -Wall -Werror-implicit-function-declaration -fexceptions -mthreads -pipe"),
+            LINKFLAGS      = Split("-s -mthreads -Wl,-Map,${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ) ,
+    ]
+else:
+    envs = [
+        Environment(
+            ENVNAME        = "debug",
+            ENV            = os.environ,
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split(""),
+            LIBS           = Split("gcov") + LIBS,
+            CCFLAGS        = Split("-g -Wall -Werror-implicit-function-declaration -fexceptions -pthread -pipe -ftest-coverage -fprofile-arcs"),
+            LINKFLAGS      = Split("-pthread -Wl,-Map,${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ) ,
+        Environment(
+            ENVNAME        = "release",
+            ENV            = os.environ,
+            CPPPATH        = INC_PATH + [],
+            LIBPATH        = LIB_PATH + [],
+            CPPDEFINES     = CPPDEFINES + Split("NDEBUG"),
+            LIBS           = Split("") + LIBS,
+            CCFLAGS        = Split("-O3 -Wall -Werror-implicit-function-declaration -fexceptions -pthread -pipe"),
+            LINKFLAGS      = Split("-s -pthread -Wl,-Map,${RMEXT(TARGET)}.map"),
+            BUILDNAME      = BUILD_NAME,
+            BUILDPATH      = BUILD_PATH,
+            OBJECTPATH     = OBJECT_PATH,
+            SOURCESUFFIXES = SOURCE_SUFFIXES + [],
+            SOURCEEXCLUDES = SOURCE_EXCLUDES + [],
+            SOURCEPATH     = SRC_PATH + [],
+            RMEXT          = _rmext,
+            ) ,
+    ]
+
+###################################################################
+def search_path(pathitems, suffixes, excludes):
+    ret = []
+    for i in xrange(len(pathitems)):
+        if pathitems[i] == "*":
+            basedir = "/".join(pathitems[:i])
+            if not path.isdir(basedir):
+                return ret
+            for d in os.listdir(basedir):
+                if path.isdir(path.join(basedir, d)):
+                    items = copy(pathitems)
+                    items[i] = d
+                    ret.extend(search_path(items, suffixes, excludes))
+            return ret
+        if pathitems[i] == "**":
+            basedir = "/".join(pathitems[:i])
+            if not path.isdir(basedir):
+                return ret
+            for root, dirs, files in os.walk(basedir):
+                items = copy(pathitems)
+                items[i] = path.relpath(root, basedir)
+                ret.extend(search_path(items, suffixes, excludes))
+            return ret
+    basedir = "/".join(pathitems)
+    if not path.isdir(basedir):
+        return ret
+    for f in os.listdir(basedir):
+        f = path.normpath(f)
+        if f not in excludes:
+            pp = '/'.join([basedir, f])
+            if (path.splitext(pp)[1] in suffixes) and path.isfile(pp):
+                ret.append(path.normpath(pp))
+    return ret
+
+def findfiles(paths, suffixes, excludes):
+    ret = []
+    suffixes = map(path.normpath, suffixes)
+    excludes = map(path.normpath, excludes)
+    for p in paths:
+        ret += search_path(p.replace("\\", "/").split("/"), suffixes, excludes)
+    ret = list(set(ret))
+    ret.sort()
+    return tuple(ret)
+
+#find gcc path
+def find_gcc_inc_path():
+    path1 = os.environ.get("C_INCLUDE_PATH", "")
+    path2 = os.environ.get("CPLUS_INCLUDE_PATH", "")
+    paths = path1.split(";") + path2.split(";")
+    paths = set(filter(lambda p: p, paths))
+    return tuple(paths)
+
+GCC_INC_PATH = find_gcc_inc_path()
+
+allproject = {}
+default_objs = {}
+
+for env in envs:
+    #if use windres you should set the path in command line, it will not search files from the environment variables
+    if is_win32 and env['RC'] == 'windres':
+        env['RCINCFLAGS'] = env['RCINCFLAGS'] + "".join(map(lambda p: " " + env['RCINCPREFIX'] + " " + p, GCC_INC_PATH))
+ 
+    sourcefiles = findfiles(env["SOURCEPATH"], env["SOURCESUFFIXES"], env["SOURCEEXCLUDES"])
+    objs = {}
+    for sf in sourcefiles:
+        if is_win32 and path.splitext(sf)[1].lower() == ".rc":
+            args = path.join(env["OBJECTPATH"], env["ENVNAME"], sf + env["OBJSUFFIX"]), sf
+            objs[sf] = env.RES(*args)
+        else:
+            args = path.join(env["OBJECTPATH"], env["ENVNAME"], path.splitext(path.basename(sf))[0] + env["OBJSUFFIX"]), sf
+            objs[sf] = env.Object(*args)
+            Clean(objs[sf], map(lambda ext: _rmext(str(objs[sf][0])) + ext, ['.asm', '.s', '.gcno', '.gcda', '.pdb']))
+    if BUILD_TYPE == 'library':
+        dest = env.Library(path.join(env["BUILDPATH"], env["ENVNAME"], env["BUILDNAME"]), objs.values())
+    elif BUILD_TYPE == 'shared':
+        dest = env.SharedLibrary(path.join(env["BUILDPATH"], env["ENVNAME"], env["BUILDNAME"]), objs.values())
+    else:
+        dest = env.Program(path.join(env["BUILDPATH"], env["ENVNAME"], env["BUILDNAME"]), objs.values())
+    Clean(dest, map(lambda ext: _rmext(str(dest[0])) + ext, ['.ilk', '.map', '.pdb']))
+    Clean(dest, str(dest[0]) + '.manifest')
+    allproject[env["ENVNAME"]] = dest
+    if env["ENVNAME"] == DEFAULT_ENV:
+        default_objs = objs
+
+for k, v in allproject.items():
+    Alias(k, v)
+
+for k, v in default_objs.items():
+    Alias(path.basename(k), v)
+
+Alias("all", allproject.values())
+
+Default(DEFAULT_ENV)
+
+Command('../', DEFAULT_ENV, Copy("$TARGET", '$SOURCE'))
