@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_GetErrorMsg", "test\GetErrorMsg.vcproj", "{097A959F-660D-478E-8AD5-D45EEE2EF100}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_WideCharToMultiByte", "test\test_WideCharToMultiByte.vcproj", "{D0FA28E8-3A36-4344-B27C-D3A3F749559B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test_TimeCounter", "test\test_TimeCounter.vcproj", "{8568AC3E-8DA6-46E1-B812-7FB1C60F693D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{097A959F-660D-478E-8AD5-D45EEE2EF100}.Debug|Win32.ActiveCfg = Debug|Win32
+		{097A959F-660D-478E-8AD5-D45EEE2EF100}.Debug|Win32.Build.0 = Debug|Win32
+		{097A959F-660D-478E-8AD5-D45EEE2EF100}.Release|Win32.ActiveCfg = Release|Win32
+		{097A959F-660D-478E-8AD5-D45EEE2EF100}.Release|Win32.Build.0 = Release|Win32
+		{D0FA28E8-3A36-4344-B27C-D3A3F749559B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D0FA28E8-3A36-4344-B27C-D3A3F749559B}.Debug|Win32.Build.0 = Debug|Win32
+		{D0FA28E8-3A36-4344-B27C-D3A3F749559B}.Release|Win32.ActiveCfg = Release|Win32
+		{D0FA28E8-3A36-4344-B27C-D3A3F749559B}.Release|Win32.Build.0 = Release|Win32
+		{8568AC3E-8DA6-46E1-B812-7FB1C60F693D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8568AC3E-8DA6-46E1-B812-7FB1C60F693D}.Debug|Win32.Build.0 = Debug|Win32
+		{8568AC3E-8DA6-46E1-B812-7FB1C60F693D}.Release|Win32.ActiveCfg = Release|Win32
+		{8568AC3E-8DA6-46E1-B812-7FB1C60F693D}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
