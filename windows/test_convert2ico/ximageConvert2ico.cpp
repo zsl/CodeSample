@@ -7,14 +7,17 @@ using std::tr1::shared_ptr;
 
 namespace
 {
-    void changeFrame(shared_ptr<CxImage> image, CxImage::CXTEXTINFO* textInfo, const SIZE& sz)
+    void changeFrame(shared_ptr<CxImage> image, CxImage::CXTEXTINFO* textInfo, SIZE sz)
     {
+        std::cout << "frame width: " << image->GetWidth()
+                  << ", frame height: " << image->GetHeight() << std::endl;
+        
         long x = image->GetWidth() - sz.cx;
         x += sz.cx / 2;
 
         long y = sz.cy;
 
-        image->DrawStringEx(NULL, x, y, textInfo);
+        image->DrawStringEx(NULL, x, y, textInfo, true);
     }
 }
 
@@ -44,33 +47,39 @@ namespace ximage
             }
         }
 
-
         // 接下来，我们要对每个frame进行画图
+        DWORD fcolor = RGB(255, 255, 255) | (255 << 24);
+        DWORD bcolor = RGB(255, 0, 0) | (255 << 24);
         CxImage::CXTEXTINFO text = { 0 };
         image->InitTextInfo(&text);
         text.lfont.lfCharSet = DEFAULT_CHARSET;
-        text.lfont.lfWeight = FW_BOLD;
+        //text.lfont.lfWeight = FW_BOLD;
         text.lfont.lfHeight = -12;
-        text.fcolor = RGB(255, 255, 255);
+        text.fcolor = fcolor;
         text.opaque = TRUE;
-        text.bcolor = RGB(255, 0, 0);
+        text.bcolor = bcolor;
         text.b_round = 20;
-        _tcscpy(text.lfont.lfFaceName, _T("微软雅黑"));
+        _tcscpy(text.lfont.lfFaceName, _T("新宋体"));
 
         _tcscpy(text.text, _T("11"));
 
-        SIZE sz = { 0 };
-        long ret = image->GetDrawStringExSize(NULL, &text, sz);
-
-        if (!ret)
-        {
-            std::cout << "get string size failed\n";
-            return false;
-        }
 
         for (int frameIndex = 0; frameIndex < frames.size(); ++frameIndex)
         {
-            //changeFrame(frames[frameIndex], &text, sz);
+            text.lfont.lfHeight = -(frames[frameIndex]->GetWidth() / 7 * 2);
+
+            SIZE sz = { 0 };
+            long ret = image->GetDrawStringExSize(NULL, &text, sz);
+
+            if (!ret)
+            {
+                std::cout << "get string size failed\n";
+                return false;
+            }
+
+            std::cout << "font size: " << sz.cx << ", " << sz.cy << std::endl;
+
+            changeFrame(frames[frameIndex], &text, sz);
         }
 
         FILE* hFile = _wfopen(savePath,L"w+b");

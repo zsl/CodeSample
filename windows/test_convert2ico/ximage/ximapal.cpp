@@ -412,7 +412,7 @@ RGBQUAD CxImage::RGBtoRGBQUAD(COLORREF cr)
 	c.rgbRed = GetRValue(cr);	/* get R, G, and B out of DWORD */
 	c.rgbGreen = GetGValue(cr);
 	c.rgbBlue = GetBValue(cr);
-	c.rgbReserved=0;
+	c.rgbReserved=cr >> 24;
 	return c;
 }
 ////////////////////////////////////////////////////////////////////////////////

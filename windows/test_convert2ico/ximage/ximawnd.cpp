@@ -1330,7 +1330,7 @@ long CxImage::DrawStringEx(HDC hdc, long x, long y, CXTEXTINFO *pTextType, bool 
 				pcolor.rgbBlue  = (unsigned char)(a * (pcolor.rgbBlue  - p_forecolor.rgbBlue)  + p_forecolor.rgbBlue );
                 pcolor.rgbRed   = (unsigned char)(a * (pcolor.rgbRed   - p_forecolor.rgbRed)   + p_forecolor.rgbRed ) ;
                 pcolor.rgbGreen = (unsigned char)(a * (pcolor.rgbGreen - p_forecolor.rgbGreen) + p_forecolor.rgbGreen );
-                pcolor.rgbReserved = 0;
+                pcolor.rgbReserved = 255;
                 SetPixelColor(x+ix+frame,y+iy-frame,pcolor,bSetAlpha);
               //SetPixelColor(x+ix+frame,y+iy-frame,p_forecolor,bSetAlpha);
 			}

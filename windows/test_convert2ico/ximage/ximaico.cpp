@@ -185,7 +185,9 @@ bool CxImageICO::Decode(CxFile *hFile)
 							SetTransColor(ct);
 							SetTransIndex(nTransIndex);
 #if CXIMAGE_SUPPORT_ALPHA
-							AlphaDelete(); //because we have a unique transparent color in the image
+                            if (head.biBitCount == 32){
+							    AlphaDelete(); //because we have a unique transparent color in the image
+                            }
 #endif //CXIMAGE_SUPPORT_ALPHA
 						}
 

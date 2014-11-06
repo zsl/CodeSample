@@ -263,5 +263,5 @@ int main()
 {
     GdiPlusIniter gdiplusIniter;
 
-    ximage::convert2Icon(L"D:\\icons\\convert.png", L"d:\\icons\\icon1.ico");
+    ximage::convert2Icon(L"D:\\icons\\convert.ico", L"d:\\icons\\icon1.ico");
 }
