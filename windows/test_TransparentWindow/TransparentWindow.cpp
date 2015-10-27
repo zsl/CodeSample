@@ -124,8 +124,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    hInst = hInstance; // 将实例句柄存储在全局变量中
 
-   hWnd = CreateWindowEx(WS_EX_LAYERED, szWindowClass, szTitle, WS_POPUP,
+   hWnd = CreateWindow(szWindowClass, szTitle, WS_POPUP,
       100, 100, 400, 400, NULL, NULL, hInstance, NULL);
+
+   //CreateWindow()
 
    if (!hWnd)
    {
@@ -181,6 +183,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_CREATE:
         {
+			DWORD style = GetWindowLong(hWnd, GWL_STYLE);
+			style &= ~(WS_BORDER|WS_CAPTION);
+			SetWindowLong(hWnd, GWL_STYLE, style);
+			DWORD exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+			exStyle |= WS_EX_LAYERED;
+			SetWindowLong(hWnd, GWL_EXSTYLE, exStyle);
             
             HDC hdc = ::GetDC(hWnd);
             RECT rcWindow;
@@ -192,8 +200,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 // 填充成半透的颜色
                 Gdiplus::Graphics g(memdc);
-                Gdiplus::SolidBrush brush(Gdiplus::Color(0x55, 0x0, 0x0, 0x0));
+                //Gdiplus::SolidBrush brush(Gdiplus::Color(0x55, 0x0, 0x0, 0x0));
+				Gdiplus::SolidBrush brush(Gdiplus::Color(0xff, 0xff, 0xff));
                 g.FillRectangle(&brush, rcWindow.left, rcWindow.top, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+
+				Gdiplus::SolidBrush Rbrush(Gdiplus::Color(0xff, 0x0, 0));
+				g.FillEllipse(&Rbrush, rcWindow.left + 30,rcWindow.top + 30, 50, 50);
 
             }
 
@@ -209,7 +221,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             POINT ptsrc = {0, 0};
             // 使用UpdateLayeredWindow来设置窗口透明的背景
             // 目标窗口的size必须指定，否则显示不出来
-            BOOL ret = ::UpdateLayeredWindow(hWnd, NULL, NULL, &szdst, memdc, &ptsrc, 0, &bf, ULW_ALPHA);
+			//SetLayeredWindowAttributes(hWnd, RGB(0xff,0xff,0xff), 0xaa, LWA_COLORKEY);
+			BOOL ret = ::UpdateLayeredWindow(hWnd, NULL, NULL, &szdst, memdc, &ptsrc, RGB(255,255,255), &bf, ULW_COLORKEY);
+
+
 
             ::SelectObject(memdc, oldbmp);
             ::DeleteObject(membitmap);
